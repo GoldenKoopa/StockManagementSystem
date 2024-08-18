@@ -1,6 +1,9 @@
 package com.sms.stockmanagementsystem.project;
 
-import org.json.simple.JSONObject;
+import com.sms.stockmanagementsystem.project.data.Container;
+import com.sms.stockmanagementsystem.project.repositories.ContainerRepository;
+import com.sms.stockmanagementsystem.project.repositories.GroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +16,12 @@ import java.time.LocalDateTime;
 @SpringBootApplication
 public class StockManagementSystemApplication implements CommandLineRunner {
 
+	@Autowired
+	private ContainerRepository containerRepository;
+
+	@Autowired
+	private GroupRepository groupRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(StockManagementSystemApplication.class, args);
 	}
@@ -20,7 +29,12 @@ public class StockManagementSystemApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-//		ContainerItem containerItem = new ContainerItem("test", LocalDateTime.now(), "user", "dlakjsltkja");
+		Container containerItem = new Container("test", LocalDateTime.now(), "user", "dlakjsltkja");
+		containerRepository.save(containerItem);
+
+//		Group group = new Group("test");
+//		groupRepository.save(group);
+
 //		JSONConverter.save(containerItem, "test");
 
 //		ContainerItem containerItem = JSONConverter.getContainerItems("test", "test");
