@@ -14,3 +14,4 @@ server:
     include-message: ALWAYS
 
 
+secret: testsecret

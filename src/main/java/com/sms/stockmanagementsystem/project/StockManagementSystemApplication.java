@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,6 +23,9 @@ public class StockManagementSystemApplication implements CommandLineRunner {
 	@Autowired
 	private GroupRepository groupRepository;
 
+	@Autowired
+	Environment environment;
+
 	public static void main(String[] args) {
 		SpringApplication.run(StockManagementSystemApplication.class, args);
 	}
@@ -29,8 +33,10 @@ public class StockManagementSystemApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		Container containerItem = new Container("test", LocalDateTime.now(), "user", "dlakjsltkja");
-		containerRepository.save(containerItem);
+		System.out.println(environment.getProperty("test"));
+
+//		Container containerItem = new Container("test", LocalDateTime.now(), "user", "dlakjsltkja");
+//		containerRepository.save(containerItem);
 
 //		Group group = new Group("test");
 //		groupRepository.save(group);
