@@ -56,7 +56,7 @@ public class ContainerController {
             item = new Container(name, user, containerData, serverName);
         } else {
             item = containers.get(0);
-            item.setData(data);
+            item.setData(containerData);
             item.setUpdatedBy(user);
             item.setUpdatedAt(LocalDateTime.now());
         }
