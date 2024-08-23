@@ -22,6 +22,7 @@ Group:
 - delete `/deleteGroup?secret={secret}&groupId{groupId}`: returns success of error message
 - get `/groups?secret={secret}`: returns list of groups
 - post `/renameGroup?secret={secret}&groupId={groupId}&renameTo={renameString}`: returns success or error message
+- delete `/deleteFromGroup?secret={secret}&groupId={groupId}&containerId={containerId}&server={server}`: returns success or error message
 
 
 Container:

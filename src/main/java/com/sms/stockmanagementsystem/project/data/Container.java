@@ -8,6 +8,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.nio.file.attribute.GroupPrincipal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -57,4 +58,7 @@ public class Container {
         this.createdBy = user;
     }
 
+    public void removeGroup(Group group) {
+        this.groups.remove(group);
+    }
 }

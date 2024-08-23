@@ -83,4 +83,21 @@ public class GroupController {
         groupRepository.save(groupOptional.get());
         return "success";
     }
+
+    @DeleteMapping("deleteFromGroup")
+    public String deleteFromGroup(@RequestParam("secret") String secret, @RequestParam("groupId") Integer groupId, @RequestParam("containerId") String name, @RequestParam("server") String server) {
+        security.checkSecret(secret);
+        Optional<Group> groupOptional = groupRepository.findById(groupId);
+        if (groupOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");}
+        List<Container> containerOptional = containerRepository.findByNameAndServer(name, server);
+        if (containerOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "containerid does not exist (on this server?)");}
+        Group group = groupOptional.get();
+        Container container = containerOptional.get(0);
+        if (!group.getContainers().contains(container)) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container is not in group");}
+        group.removeContainer(container);
+        groupRepository.save(group);
+        container.removeGroup(group);
+        containerRepository.save(container);
+        return "success";
+    }
 }
