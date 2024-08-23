@@ -12,7 +12,7 @@ Mapping: `/sms/api/{endpoint}`
 Container:
 - `/health`: returns 'alive' when alive
 - get `/container?secret={secret}&id={id}&server={server}`: returns Container object with requested id 
-- post `/container?secret={secret}&server={server}` with body of type {`data`: data, `user`: user, `id`: id }, stores container and returns container
+- post `/container?secret={secret}&server={server}` with body of type {`data`: data, `updatedBy`: user, `name`: containerId }, stores container and returns container
 - delete `/container?secret={secret}&id={id}&server={server}`: returns "success" or error
 
 Group:

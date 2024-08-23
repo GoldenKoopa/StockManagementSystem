@@ -46,8 +46,8 @@ public class ContainerController {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(data);
 
-        String name = (String) jsonObject.get("id");
-        String user = (String) jsonObject.get("user");
+        String name = (String) jsonObject.get("name");
+        String user = (String) jsonObject.get("upatedBy");
         String containerData = (String) jsonObject.get("data");
 
         Container item;
