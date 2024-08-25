@@ -97,4 +97,13 @@ public class ContainerController {
         security.checkSecret(secret);
         return server != null ? containerRepository.findByServer(server) : containerRepository.findAll();
     }
+
+    @GetMapping("/getContainerGroups")
+    public List<Group> getContainerGroups(@RequestParam("secret") String secret, @RequestParam("server") String server, @RequestParam("containerId") String name) {
+        security.checkSecret(secret);
+        List<Container> containerList = containerRepository.findByNameAndServer(name, server);
+        if (containerList.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");}
+        Container container = containerList.get(0);
+        return container.getGroups();
+    }
 }

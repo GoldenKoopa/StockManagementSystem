@@ -14,6 +14,7 @@ Container:
 - get `/container?secret={secret}&id={id}&server={server}`: returns Container object with requested id 
 - post `/container?secret={secret}&server={server}` with body of type {`data`: data, `updatedBy`: user, `name`: containerId }, stores container and returns container
 - delete `/container?secret={secret}&id={id}&server={server}`: returns "success" or error
+- get `/getContainerGroups?secret={secret}&server={server}&containerId={containerId}` returns list of groups
 
 Group:
 - post `/createGroup?secret={secret}&name={name}&user={user}`: returns success or error message
