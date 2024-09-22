@@ -7,6 +7,7 @@ import lombok.Data;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.TenantId;
 
 import java.nio.file.attribute.GroupPrincipal;
 import java.time.LocalDateTime;
@@ -23,6 +24,9 @@ public class Container {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @TenantId
+    private String server;
+
     private String name;
 
     private String createdBy;
@@ -37,7 +41,6 @@ public class Container {
     private List<Group> groups;
 
 
-    private String server;
 
     public Container() {}
 
@@ -48,8 +51,7 @@ public class Container {
         this.data = data;
     }
 
-    public Container(String name, String user, String data, String server) {
-        this.server = server;
+    public Container(String name, String user, String data) {
         this.name = name;
         this.updatedBy = user;
         this.data = data;

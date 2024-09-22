@@ -9,6 +9,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      multiTenancy: SCHEMA
+      tenant_identifier_resolver: com.sms.stockmanagement.project.multiTenant.TenantIdentifierResolver
 server:
   error:
     include-message: ALWAYS

@@ -4,6 +4,7 @@ package com.sms.stockmanagementsystem.project.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.TenantId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @TenantId
+    private String server;
     private LocalDateTime createdAt;
     private String createdBy;
     private String name;

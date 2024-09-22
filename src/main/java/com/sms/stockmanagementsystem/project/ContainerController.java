@@ -3,6 +3,7 @@ package com.sms.stockmanagementsystem.project;
 
 import com.sms.stockmanagementsystem.project.data.Container;
 import com.sms.stockmanagementsystem.project.data.Group;
+import com.sms.stockmanagementsystem.project.multiTenant.TenantIdentifierResolver;
 import com.sms.stockmanagementsystem.project.repositories.ContainerRepository;
 import com.sms.stockmanagementsystem.project.repositories.GroupRepository;
 import org.jetbrains.annotations.NotNull;
@@ -11,17 +12,24 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/sms/api")
 public class ContainerController {
+
+    @Autowired
+    private TenantIdentifierResolver tenantIdentifierResolver;
+
+
+
+    @Autowired
+    TransactionTemplate transactionTemplate;
 
     @Autowired
     private Security security;
@@ -39,9 +47,10 @@ public class ContainerController {
 
     @CrossOrigin
     @PostMapping("/container")
-    public Container setContainerDetails(@RequestBody String data, @RequestParam("secret") @NotNull String secret, @NotNull @RequestParam("server") String serverName) throws IOException, ParseException {
+    public Container setContainerDetails(@RequestBody String data, @RequestParam("secret") @NotNull String secret, @NotNull @RequestParam("server") String serverName) throws ParseException {
         security.checkSecret(secret);
 
+        tenantIdentifierResolver.setCurrentTenant(serverName);
 
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(data);
@@ -51,15 +60,17 @@ public class ContainerController {
         String containerData = (String) jsonObject.get("data");
 
         Container item;
-        List<Container> containers = containerRepository.findByNameAndServer(name, serverName);
+        List<Container> containers = containerRepository.findByName(name);
         if (containers.isEmpty()) {
-            item = new Container(name, user, containerData, serverName);
+            item = new Container(name, user, containerData);
         } else {
             item = containers.get(0);
             item.setData(containerData);
             item.setUpdatedBy(user);
             item.setUpdatedAt(LocalDateTime.now());
         }
+
+//        transactionTemplate.execute(tx -> containerRepository.save(item));
         containerRepository.save(item);
 
         return item;
@@ -67,9 +78,11 @@ public class ContainerController {
 
     @CrossOrigin
     @GetMapping("/container")
-    public Container getContainerDetails(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("containerId") String name, @NotNull @RequestParam("server") String server) throws IOException, ParseException {
+    public Container getContainerDetails(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("containerId") String name, @NotNull @RequestParam("server") String serverName) {
         security.checkSecret(secret);
-        List<Container> item = containerRepository.findByNameAndServer(name, server);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
+        List<Container> item = containerRepository.findByName(name);
         if (item.isEmpty()) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
         }
@@ -78,9 +91,11 @@ public class ContainerController {
 
     @CrossOrigin
     @DeleteMapping("/container")
-    public String deleteContainerItem(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("containerId") String name, @NotNull @RequestParam("server") String server) {
+    public String deleteContainerItem(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("containerId") String name, @NotNull @RequestParam("server") String serverName) {
         security.checkSecret(secret);
-        List<Container> containerList = containerRepository.findByNameAndServer(name, server);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
+        List<Container> containerList = containerRepository.findByName(name);
         if (containerList.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");}
         Container container = containerList.get(0);
         for (Group group : container.getGroups()) {
@@ -93,15 +108,19 @@ public class ContainerController {
 
     @CrossOrigin
     @GetMapping("/getContainers")
-    public List<Container> getAllContainers(@NotNull @RequestParam("secret") String secret, @RequestParam(value = "server", required = false) String server) {
+    public List<Container> getAllContainers(@NotNull @RequestParam("secret") String secret, @RequestParam(value = "server", required = false) String serverName) {
         security.checkSecret(secret);
-        return server != null ? containerRepository.findByServer(server) : containerRepository.findAll();
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
+        return containerRepository.findAll();
     }
 
     @GetMapping("/getContainerGroups")
-    public List<Group> getContainerGroups(@RequestParam("secret") String secret, @RequestParam("server") String server, @RequestParam("containerId") String name) {
+    public List<Group> getContainerGroups(@RequestParam("secret") String secret, @RequestParam("server") String server, @RequestParam("containerId") String name, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
-        List<Container> containerList = containerRepository.findByNameAndServer(name, server);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
+        List<Container> containerList = containerRepository.findByName(name);
         if (containerList.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");}
         Container container = containerList.get(0);
         return container.getGroups();

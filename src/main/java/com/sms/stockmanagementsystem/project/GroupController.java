@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +28,10 @@ public class GroupController {
     private ContainerRepository containerRepository;
 
     @PostMapping("/createGroup")
-    public String createGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("name") String name, @RequestParam("user") String user) {
+    public String createGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("name") String name, @RequestParam("user") String user, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         if (!groupRepository.findByName(name).isEmpty()) {throw new ResponseStatusException(HttpStatus.CONFLICT, "group already exists");}
         Group group = new Group(name, user);
         groupRepository.save(group);
@@ -38,12 +39,14 @@ public class GroupController {
     }
 
     @PostMapping("/addToGroup")
-    public String addToGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @NotNull @RequestParam("containerId") String containerId, @NotNull @RequestParam("server") String server) {
+    public String addToGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @NotNull @RequestParam("containerId") String containerId, @NotNull @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (groupOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");}
         Group group = groupOptional.get();
-        List<Container> containerOptional = containerRepository.findByNameAndServer(containerId, server);
+        List<Container> containerOptional = containerRepository.findByName(containerId);
         if (containerOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "id does not exist");}
         Container container = containerOptional.get(0);
         group.addContainer(container);
@@ -52,16 +55,20 @@ public class GroupController {
     }
 
     @GetMapping("/getGroup")
-    public List<Container> getGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @RequestParam("server") String server) {
+    public List<Container> getGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         Optional<Group> groups = groupRepository.findById(groupId);
         if (groups.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");}
-        return groups.get().getContainers(server);
+        return groups.get().getContainers(serverName);
     }
 
     @DeleteMapping("/deleteGroup")
-    public String deleteGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId) {
+    public String deleteGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (groupOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");}
         groupRepository.delete(groupOptional.get());
@@ -69,14 +76,18 @@ public class GroupController {
     }
 
     @GetMapping("/groups")
-    public List<Group> getAllGroups(@NotNull @RequestParam("secret") String secret) {
+    public List<Group> getAllGroups(@NotNull @RequestParam("secret") String secret, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         return groupRepository.findAll();
     }
 
     @PostMapping("/renameGroup")
-    public String renameGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @NotNull @RequestParam("renameTo") String renameString) {
+    public String renameGroup(@NotNull @RequestParam("secret") String secret, @NotNull @RequestParam("groupId") Integer groupId, @NotNull @RequestParam("renameTo") String renameString, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (groupOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");}
         groupOptional.get().setName(renameString);
@@ -85,11 +96,13 @@ public class GroupController {
     }
 
     @DeleteMapping("deleteFromGroup")
-    public String deleteFromGroup(@RequestParam("secret") String secret, @RequestParam("groupId") Integer groupId, @RequestParam("containerId") String name, @RequestParam("server") String server) {
+    public String deleteFromGroup(@RequestParam("secret") String secret, @RequestParam("groupId") Integer groupId, @RequestParam("containerId") String name, @RequestParam("server") String serverName) {
         security.checkSecret(secret);
+//        tenantIdentifierResolver.setCurrentTenant(serverName);
+
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (groupOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");}
-        List<Container> containerOptional = containerRepository.findByNameAndServer(name, server);
+        List<Container> containerOptional = containerRepository.findByName(name);
         if (containerOptional.isEmpty()) {throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "containerid does not exist (on this server?)");}
         Group group = groupOptional.get();
         Container container = containerOptional.get(0);
