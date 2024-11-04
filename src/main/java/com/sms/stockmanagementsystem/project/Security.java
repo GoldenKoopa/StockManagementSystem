@@ -9,11 +9,11 @@ import org.springframework.web.client.HttpServerErrorException;
 @Service
 public class Security {
 
-    @Autowired
-    Environment environment;
+  @Autowired Environment environment;
 
-
-    public void checkSecret(String secret) {
-        if (!secret.equals(environment.getProperty("secret"))) {throw new HttpServerErrorException(HttpStatus.FORBIDDEN);}
+  public void checkSecret(String secret) {
+    if (!secret.equals(environment.getProperty("secret"))) {
+      throw new HttpServerErrorException(HttpStatus.FORBIDDEN);
     }
+  }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ContainerRepository extends JpaRepository<Container, String> {
 
-    List<Container> findByServer(String server);
+  List<Container> findByServer(String server);
 
-    List<Container> findByNameAndServer(String name, String server);
+  List<Container> findByNameAndServer(String name, String server);
 }
