@@ -3,9 +3,9 @@ spring:
     name: Stock Management System
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/test_db
-    username: user
-    password: test
+    url: ${HOST}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,4 +17,4 @@ server:
     include-message: ALWAYS
 
 
-secret: testsecret
+secret: ${SECRET}

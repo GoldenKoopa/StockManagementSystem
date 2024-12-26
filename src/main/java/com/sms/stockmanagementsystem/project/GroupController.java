@@ -18,11 +18,11 @@ import java.util.Optional;
 @RequestMapping("/sms/api")
 public class GroupController {
 
-  @Autowired private Security security;
+  private final Security security;
 
-  @Autowired private GroupRepository groupRepository;
+  private final GroupRepository groupRepository;
 
-  @Autowired private ContainerRepository containerRepository;
+  private final ContainerRepository containerRepository;
 
   @PostMapping("/createGroup")
   public String createGroup(
@@ -134,5 +134,12 @@ public class GroupController {
     container.removeGroup(group);
     containerRepository.save(container);
     return "success";
+  }
+
+  @Autowired
+  public GroupController(Security security, ContainerRepository containerRepository, GroupRepository groupRepository) {
+    this.security = security;
+    this.containerRepository = containerRepository;
+    this.groupRepository = groupRepository;
   }
 }

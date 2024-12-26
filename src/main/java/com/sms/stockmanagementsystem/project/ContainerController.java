@@ -20,11 +20,11 @@ import java.util.List;
 @RequestMapping("/sms/api")
 public class ContainerController {
 
-  @Autowired private Security security;
+  private final Security security;
 
-  @Autowired private ContainerRepository containerRepository;
+  private final ContainerRepository containerRepository;
 
-  @Autowired private GroupRepository groupRepository;
+  private final GroupRepository groupRepository;
 
   @GetMapping("/health")
   public String health() {
@@ -119,5 +119,12 @@ public class ContainerController {
     }
     Container container = containerList.get(0);
     return container.getGroups();
+  }
+
+  @Autowired
+  public ContainerController(Security security, ContainerRepository containerRepository, GroupRepository groupRepository) {
+    this.security = security;
+    this.containerRepository = containerRepository;
+    this.groupRepository = groupRepository;
   }
 }
