@@ -1,9 +1,8 @@
 # SMS - Stock Management System
 
 ## Docker/Database
-to start the database run `docker compose up` in the directory of your `docker-compose.yml`.
-start the database before you run the jar
-to stop the database run `docker compose stop`
+to start run `docker compose up` where your `docker-compose.yml` is located
+
 
 ## Endpoints
 
