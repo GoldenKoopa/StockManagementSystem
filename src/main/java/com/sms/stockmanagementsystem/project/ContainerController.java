@@ -20,8 +20,6 @@ import java.util.List;
 @RequestMapping("/sms/api")
 public class ContainerController {
 
-  private final Security security;
-
   private final ContainerRepository containerRepository;
 
   private final GroupRepository groupRepository;
@@ -35,10 +33,8 @@ public class ContainerController {
   @PostMapping("/container")
   public Container setContainerDetails(
       @RequestBody String data,
-      @RequestParam("secret") @NotNull String secret,
       @NotNull @RequestParam("server") String serverName)
       throws ParseException {
-    security.checkSecret(secret);
 
     JSONParser parser = new JSONParser();
     JSONObject jsonObject = (JSONObject) parser.parse(data);
@@ -65,10 +61,8 @@ public class ContainerController {
   @CrossOrigin
   @GetMapping("/container")
   public Container getContainerDetails(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("containerId") String name,
       @NotNull @RequestParam("server") String server) {
-    security.checkSecret(secret);
     List<Container> item = containerRepository.findByNameAndServer(name, server);
     if (item.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
@@ -79,10 +73,8 @@ public class ContainerController {
   @CrossOrigin
   @DeleteMapping("/container")
   public String deleteContainerItem(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("containerId") String name,
       @NotNull @RequestParam("server") String server) {
-    security.checkSecret(secret);
     List<Container> containerList = containerRepository.findByNameAndServer(name, server);
     if (containerList.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");
@@ -99,9 +91,7 @@ public class ContainerController {
   @CrossOrigin
   @GetMapping("/getContainers")
   public List<Container> getAllContainers(
-      @NotNull @RequestParam("secret") String secret,
       @RequestParam(value = "server", required = false) String server) {
-    security.checkSecret(secret);
     return server != null
         ? containerRepository.findByServer(server)
         : containerRepository.findAll();
@@ -109,10 +99,8 @@ public class ContainerController {
 
   @GetMapping("/getContainerGroups")
   public List<Group> getContainerGroups(
-      @RequestParam("secret") String secret,
       @RequestParam("server") String server,
       @RequestParam("containerId") String name) {
-    security.checkSecret(secret);
     List<Container> containerList = containerRepository.findByNameAndServer(name, server);
     if (containerList.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");
@@ -122,8 +110,7 @@ public class ContainerController {
   }
 
   @Autowired
-  public ContainerController(Security security, ContainerRepository containerRepository, GroupRepository groupRepository) {
-    this.security = security;
+  public ContainerController(ContainerRepository containerRepository, GroupRepository groupRepository) {
     this.containerRepository = containerRepository;
     this.groupRepository = groupRepository;
   }

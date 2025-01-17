@@ -18,7 +18,6 @@ import java.util.Optional;
 @RequestMapping("/sms/api")
 public class GroupController {
 
-  private final Security security;
 
   private final GroupRepository groupRepository;
 
@@ -26,10 +25,8 @@ public class GroupController {
 
   @PostMapping("/createGroup")
   public String createGroup(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("name") String name,
       @RequestParam("user") String user) {
-    security.checkSecret(secret);
     if (!groupRepository.findByName(name).isEmpty()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "group already exists");
     }
@@ -40,11 +37,9 @@ public class GroupController {
 
   @PostMapping("/addToGroup")
   public String addToGroup(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("groupId") Integer groupId,
       @NotNull @RequestParam("containerId") String containerId,
       @NotNull @RequestParam("server") String server) {
-    security.checkSecret(secret);
     Optional<Group> groupOptional = groupRepository.findById(groupId);
     if (groupOptional.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");
@@ -63,10 +58,8 @@ public class GroupController {
 
   @GetMapping("/getGroup")
   public List<Container> getGroup(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("groupId") Integer groupId,
       @RequestParam("server") String server) {
-    security.checkSecret(secret);
     Optional<Group> groups = groupRepository.findById(groupId);
     if (groups.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");
@@ -76,9 +69,7 @@ public class GroupController {
 
   @DeleteMapping("/deleteGroup")
   public String deleteGroup(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("groupId") Integer groupId) {
-    security.checkSecret(secret);
     Optional<Group> groupOptional = groupRepository.findById(groupId);
     if (groupOptional.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");
@@ -89,16 +80,13 @@ public class GroupController {
 
   @GetMapping("/groups")
   public List<Group> getAllGroups(@NotNull @RequestParam("secret") String secret) {
-    security.checkSecret(secret);
     return groupRepository.findAll();
   }
 
   @PostMapping("/renameGroup")
   public String renameGroup(
-      @NotNull @RequestParam("secret") String secret,
       @NotNull @RequestParam("groupId") Integer groupId,
       @NotNull @RequestParam("renameTo") String renameString) {
-    security.checkSecret(secret);
     Optional<Group> groupOptional = groupRepository.findById(groupId);
     if (groupOptional.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");
@@ -110,11 +98,9 @@ public class GroupController {
 
   @DeleteMapping("deleteFromGroup")
   public String deleteFromGroup(
-      @RequestParam("secret") String secret,
       @RequestParam("groupId") Integer groupId,
       @RequestParam("containerId") String name,
       @RequestParam("server") String server) {
-    security.checkSecret(secret);
     Optional<Group> groupOptional = groupRepository.findById(groupId);
     if (groupOptional.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "group does not exist");
@@ -137,8 +123,7 @@ public class GroupController {
   }
 
   @Autowired
-  public GroupController(Security security, ContainerRepository containerRepository, GroupRepository groupRepository) {
-    this.security = security;
+  public GroupController(ContainerRepository containerRepository, GroupRepository groupRepository) {
     this.containerRepository = containerRepository;
     this.groupRepository = groupRepository;
   }
