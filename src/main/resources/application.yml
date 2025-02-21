@@ -15,9 +15,10 @@ spring:
 server:
   error:
     include-message: ALWAYS
+  servlet:
+    context-path: /sms/
 
 logging.level:
   org.springframework.security: TRACE
-
 
 secret: ${SECRET}

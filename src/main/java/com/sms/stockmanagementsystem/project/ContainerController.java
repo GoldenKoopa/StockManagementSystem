@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sms/api")
+@RequestMapping("/api")
 public class ContainerController {
 
   private final ContainerRepository containerRepository;
