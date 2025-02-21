@@ -1,11 +1,15 @@
 package com.sms.stockmanagementsystem.project.data.authentication;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 
+@Data
 @Entity
 @Table(name = "privileges")
+@NoArgsConstructor
 public class Privilege {
 
     @Id
@@ -18,31 +22,6 @@ public class Privilege {
     private Collection<Role> roles;
 
     public Privilege(String name) {
-    }
-
-    public Privilege() {}
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
     }
 }
