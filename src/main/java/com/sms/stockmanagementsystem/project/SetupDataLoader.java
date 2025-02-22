@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,6 +28,8 @@ public class SetupDataLoader
   @Autowired private RoleRepository roleRepository;
 
   @Autowired private PrivilegeRepository privilegeRepository;
+
+  @Autowired PasswordEncoder passwordEncoder;
 
   // @Autowired
   // private PasswordEncoder passwordEncoder;
@@ -43,18 +46,16 @@ public class SetupDataLoader
     createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
     createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
 
-    if (userRepository.findByEmail("testuser") != null) {
+    if (userRepository.findByUsername("user").isPresent()) {
       return;
     }
-
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     Role adminRole = roleRepository.findByName("ROLE_USER");
     User user = new User();
     user.setFirstName("Test");
     user.setLastName("Test");
-    user.setPassword("{bcrypt}" + passwordEncoder.encode("test"));
-    user.setEmail("testuser");
+    user.setPassword(passwordEncoder.encode("test"));
+    user.setUsername("user");
     user.setRoles(Arrays.asList(adminRole));
     user.setEnabled(true);
     userRepository.save(user);

@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
@@ -17,15 +19,20 @@ public class SecurityConfig {
       throws Exception {
     http.authorizeHttpRequests((authorize) -> {
           authorize.requestMatchers("/").permitAll();
-          authorize.requestMatchers("/resources/**").permitAll();
           authorize.requestMatchers("/error").permitAll();
           authorize.anyRequest().authenticated();
         })
         .formLogin(Customizer.withDefaults())
-        // .csrf(csrf
-        // -> csrf.csrfTokenRepository(
-        // CookieCsrfTokenRepository.withHttpOnlyFalse()));
-        ;
+        .logout(logout -> logout.permitAll())
+        .csrf(csrf
+              -> csrf.csrfTokenRepository(
+                  CookieCsrfTokenRepository.withHttpOnlyFalse()));
+    ;
     return http.build();
+  }
+
+  @Bean
+  public PasswordEncoder encoder() {
+    return new BCryptPasswordEncoder();
   }
 }

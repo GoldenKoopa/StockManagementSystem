@@ -18,8 +18,7 @@ public class StockManagementSystemApplication implements CommandLineRunner {
     SpringApplication.run(StockManagementSystemApplication.class, args);
   }
 
-  @Override
-  public void run(String... args) { // NOSONAR
+  @Override public void run(String... args) { // NOSONAR
   }
 
   @Bean
@@ -34,17 +33,18 @@ public class StockManagementSystemApplication implements CommandLineRunner {
 
   @Bean
   public RoleHierarchy roleHierarchy() {
-    RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
     String hierarchy = "ROLE_ADMIN > ROLE_STAFF \n ROLE_STAFF > ROLE_USER";
-    roleHierarchy.setHierarchy(hierarchy);
+    RoleHierarchyImpl roleHierarchy =
+        RoleHierarchyImpl.fromHierarchy(hierarchy);
     return roleHierarchy;
   }
 
   @Bean
-  public DefaultWebSecurityExpressionHandler customWebSecurityExpressionHandler() {
-    DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
+  public DefaultWebSecurityExpressionHandler
+  customWebSecurityExpressionHandler() {
+    DefaultWebSecurityExpressionHandler expressionHandler =
+        new DefaultWebSecurityExpressionHandler();
     expressionHandler.setRoleHierarchy(roleHierarchy());
     return expressionHandler;
   }
-
 }

@@ -2,11 +2,10 @@ package com.sms.stockmanagementsystem.project.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
 @Entity
@@ -14,9 +13,7 @@ import java.util.List;
 @Table(name = "Container")
 public class Container {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
 
   private String name;
 
@@ -25,19 +22,16 @@ public class Container {
   private LocalDateTime updatedAt;
   private String updatedBy;
 
-  @Column(columnDefinition = "TEXT")
-  private String data;
+  @Column(columnDefinition = "TEXT") private String data;
 
-  @JsonIgnore
-  @ManyToMany(mappedBy = "containers")
-  private List<Group> groups;
+  @JsonIgnore @ManyToMany(mappedBy = "containers") private List<Group> groups;
 
   private String server;
 
   public Container() {}
 
-
-  public Container(String name, LocalDateTime time, String username, String data) {
+  public Container(String name, LocalDateTime time, String username,
+                   String data) {
     this.name = name;
     this.updatedAt = time;
     this.updatedBy = username;
@@ -54,7 +48,5 @@ public class Container {
     this.createdBy = user;
   }
 
-  public void removeGroup(Group group) {
-    this.groups.remove(group);
-  }
+  public void removeGroup(Group group) { this.groups.remove(group); }
 }
