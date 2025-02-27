@@ -5,6 +5,8 @@ import eu.goldenkoopa.stockmanagementsystem.data.authentication.User;
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.ApiKeyRepository;
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.PrivilegeRepository;
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.UserRepository;
+import java.time.LocalDate;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +41,7 @@ public class ApiKeyService {
   }
 
   @Transactional
-  public ApiKey generateNewApiKey(List<Long> privilegeIds,
+  public ApiKey generateNewApiKey(List<Long> privilegeIds, Long expirationTime,
                                   UserDetails userDetails) {
     if (privilegeIds == null || privilegeIds.isEmpty()) {
       throw new IllegalArgumentException(
@@ -58,12 +60,7 @@ public class ApiKeyService {
                  -> privilegeRepository.findById(id).orElseThrow(
                      () -> new RuntimeException("privilege id not found")))
             .toList());
-    // privilegeIds.forEach(
-    // (privilegeId)
-    // -> apiKey.getPrivileges().add(
-    // privilegeRepository.findById(privilegeId)
-    // .orElseThrow(
-    // () -> new RuntimeException("privilege id not found"))));
+    apiKey.setExpirationDate(LocalDate.now().plusDays(expirationTime));
     apiKey.setKey(generateUniqueApiKey());
 
     ApiKey apiKeyResponse = apiKeyRepository.save(apiKey);
@@ -76,5 +73,10 @@ public class ApiKeyService {
       key = UUID.randomUUID().toString();
     } while (apiKeyRepository.existsByKey(key));
     return key;
+  }
+
+  public ApiKey getApiKeyByKey(String string) {
+    return apiKeyRepository.findByKey(string).orElseThrow(
+        () -> new RuntimeException("api key not found"));
   }
 }

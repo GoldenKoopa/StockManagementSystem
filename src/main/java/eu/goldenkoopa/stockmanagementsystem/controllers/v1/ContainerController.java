@@ -33,7 +33,7 @@ public class ContainerController {
 
   private final GroupRepository groupRepository;
 
-  @Secured({ "WRITE_PRIVILEGE" })
+  @Secured({ "API_HEALTH_READ" })
   @GetMapping("/health")
   public String health() {
     return "alive";

@@ -44,16 +44,17 @@ public class ApiKeyController {
                     @AuthenticationPrincipal UserDetails userDetails) {
     ApiKeyWithUserDto apiKey =
         ApiKeyWithUserDto.from(apiKeyService.generateNewApiKey(
-            apiKeyRequest.privilegeIds(), userDetails));
+            apiKeyRequest.privilegeIds(), apiKeyRequest.expirationTime(), userDetails));
     return new ResponseEntity<>(apiKey, HttpStatus.CREATED);
   }
 
-  // private record ApiKeyRequest(List<Long> privilegeIds) {}
   private record ApiKeyRequest(
-      @NotNull(message = "Privilege IDs cannot be null test")
-      @NotEmpty(message = "Privilege IDs cannot be empty test")
-      List<@NotNull(message = "Privilege ID cannot be null test") Long>
-          privilegeIds) {}
+      @NotNull(message = "Privilege IDs cannot be null")
+      @NotEmpty(message = "Privilege IDs cannot be empty")
+      List<@NotNull(message = "Privilege ID cannot be null") Long> privilegeIds,
+      @NotNull(message = "Expiration time cannot be null")
+      @NotEmpty(message = "Expiration time cannot be empty")
+      Long expirationTime) {}
 
   @Autowired
   public ApiKeyController(ApiKeyService apiKeyService) {

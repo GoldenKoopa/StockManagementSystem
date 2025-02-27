@@ -1,6 +1,7 @@
 package eu.goldenkoopa.stockmanagementsystem.repositories.authentication;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ public interface ApiKeyRepository extends JpaRepository<ApiKey, Long> {
   List<ApiKey> findByUser(User user);
 
   boolean existsByKey(String key);
+
+  Optional<ApiKey> findByKey(String key);
 }
