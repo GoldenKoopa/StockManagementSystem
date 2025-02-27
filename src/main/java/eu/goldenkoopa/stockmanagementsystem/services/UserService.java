@@ -2,6 +2,7 @@ package eu.goldenkoopa.stockmanagementsystem.services;
 
 import eu.goldenkoopa.stockmanagementsystem.data.authentication.User;
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.UserRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +50,11 @@ public class UserService {
     return userRepository.findByUsername(username).isPresent();
   }
 
+  public User getUserById(Long id) {
+    return userRepository.findById(id).orElseThrow(
+        () -> new RuntimeException("id not found"));
+  }
+
   /**
    * Saves a user to the repository.
    *
@@ -62,4 +68,9 @@ public class UserService {
    * @param id The id of the user to delete.
    */
   public void deleteUser(Long id) { userRepository.deleteById(id); }
+
+  /**
+   * Gets all users from the repository.
+   */
+  public List<User> getAllUsers() { return userRepository.findAll(); }
 }
