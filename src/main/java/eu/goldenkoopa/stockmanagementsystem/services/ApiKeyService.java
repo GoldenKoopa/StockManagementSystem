@@ -6,7 +6,6 @@ import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.ApiKeyRe
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.PrivilegeRepository;
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.UserRepository;
 import java.time.LocalDate;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +24,8 @@ public class ApiKeyService {
   private PrivilegeRepository privilegeRepository;
 
   public ApiKeyService(ApiKeyRepository apiKeyRepository,
-                       UserRepository userRepository,
-                       PrivilegeRepository privilegeRepository) {
+      UserRepository userRepository,
+      PrivilegeRepository privilegeRepository) {
     this.apiKeyRepository = apiKeyRepository;
     this.userRepository = userRepository;
     this.privilegeRepository = privilegeRepository;
@@ -42,23 +41,21 @@ public class ApiKeyService {
 
   @Transactional
   public ApiKey generateNewApiKey(List<Long> privilegeIds, Long expirationTime,
-                                  UserDetails userDetails) {
+      UserDetails userDetails) {
     if (privilegeIds == null || privilegeIds.isEmpty()) {
       throw new IllegalArgumentException(
           "Privilege IDs cannot be null or empty");
     }
-    User user =
-        userRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(
-                () -> new UsernameNotFoundException("username not found"));
+    User user = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(
+            () -> new UsernameNotFoundException("username not found"));
 
     ApiKey apiKey = new ApiKey();
     apiKey.setUser(user);
     apiKey.setPrivileges(
         privilegeIds.stream()
-            .map(id
-                 -> privilegeRepository.findById(id).orElseThrow(
-                     () -> new RuntimeException("privilege id not found")))
+            .map(id -> privilegeRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("privilege id not found: " + id)))
             .toList());
     apiKey.setExpirationDate(LocalDate.now().plusDays(expirationTime));
     apiKey.setKey(generateUniqueApiKey());
