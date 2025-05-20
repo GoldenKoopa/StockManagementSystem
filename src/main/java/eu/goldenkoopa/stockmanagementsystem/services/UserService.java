@@ -3,39 +3,48 @@ package eu.goldenkoopa.stockmanagementsystem.services;
 import eu.goldenkoopa.stockmanagementsystem.data.authentication.User;
 import eu.goldenkoopa.stockmanagementsystem.repositories.authentication.UserRepository;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * UserService
- */
+/** UserService */
 @Service
 public class UserService {
 
-  @Autowired UserRepository userRepository;
+  private static final String PASSWORD_REGEX =
+      "^(?=.*[a-z])" // at least one lowercase letter
+          + "(?=.*[A-Z])" // at least one uppercase letter
+          + "(?=.*\\d)" // at least one digit
+          + "(?=.*[^A-Za-z\\d])" // at least one special character (any non-alphanumeric)
+          + ".{8,}$"; // at least 8 characters
 
-  @Autowired PasswordEncoder passwordEncoder;
+  private static final Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_REGEX);
+
+  UserRepository userRepository;
+
+  PasswordEncoder passwordEncoder;
 
   /**
    * Updates the password for a given user if the current password is correct.
    *
-   * @param username        The username of the user.
+   * @param username The username of the user.
    * @param currentPassword The current password of the user.
-   * @param newPassword     The new password to be set.
-   * @throws Exception if the current password is incorrect or the user is not
-   *                   found.
+   * @param newPassword The new password to be set.
+   * @throws Exception if the current password is incorrect or the user is not found.
    */
-  public void updatePassword(String username, String currentPassword,
-                             String newPassword) throws Exception {
-    User user = userRepository.findByUsername(username).orElseThrow(
-        () -> new UsernameNotFoundException("User not found"));
+  public void updatePassword(String username, String currentPassword, String newPassword) {
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
     if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-      throw new Exception("Current password is incorrect");
+      throw new IllegalArgumentException("Current password is incorrect");
     }
 
+    isPasswordStrong(newPassword);
     user.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(user);
   }
@@ -51,8 +60,7 @@ public class UserService {
   }
 
   public User getUserById(Long id) {
-    return userRepository.findById(id).orElseThrow(
-        () -> new RuntimeException("id not found"));
+    return userRepository.findById(id).orElseThrow(() -> new RuntimeException("id not found"));
   }
 
   /**
@@ -60,17 +68,49 @@ public class UserService {
    *
    * @param user The user to save.
    */
-  public void saveUser(User user) { userRepository.save(user); }
+  public void saveUser(User user) {
+    userRepository.save(user);
+  }
 
   /**
    * Deletes a user from the repository.
    *
    * @param id The id of the user to delete.
    */
-  public void deleteUser(Long id) { userRepository.deleteById(id); }
+  public void deleteUser(Long id) {
+    userRepository.deleteById(id);
+  }
 
-  /**
-   * Gets all users from the repository.
-   */
-  public List<User> getAllUsers() { return userRepository.findAll(); }
+  /** Gets all users from the repository. */
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
+  }
+
+  public User createUser(String username, String password) {
+    isPasswordStrong(password);
+    User user = new User();
+    user.setPassword(passwordEncoder.encode(password));
+    user.setUsername(username);
+    user.setEnabled(true);
+    User returnUser = userRepository.save(user);
+    return returnUser;
+  }
+
+  private boolean isPasswordStrong(String password) {
+    if (password == null || password.isBlank()) {
+      throw new IllegalArgumentException("Password cannot be empty");
+    }
+    if (!PASSWORD_PATTERN.matcher(password).matches()) {
+      throw new IllegalArgumentException(
+          "Password must be at least 8 characters long and contain at least one uppercase letter, "
+              + "one lowercase letter, one digit, and one special character.");
+    }
+    return true;
+  }
+
+  @Autowired
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    this.passwordEncoder = passwordEncoder;
+    this.userRepository = userRepository;
+  }
 }

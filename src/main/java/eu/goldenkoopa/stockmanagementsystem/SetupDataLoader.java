@@ -72,8 +72,6 @@ public class SetupDataLoader
     }
     Role adminRole = roleRepository.findByName("ROLE_ADMIN");
     User user = new User();
-    user.setFirstName("Test");
-    user.setLastName("Test");
     user.setPassword(passwordEncoder.encode("admin"));
     user.setUsername("admin");
     user.setRoles(Arrays.asList(adminRole));
@@ -87,8 +85,6 @@ public class SetupDataLoader
     }
     Role adminRole = roleRepository.findByName("ROLE_USER");
     User user = new User();
-    user.setFirstName("Test");
-    user.setLastName("Test");
     user.setPassword(passwordEncoder.encode("test"));
     user.setUsername("user");
     user.setRoles(Arrays.asList(adminRole));

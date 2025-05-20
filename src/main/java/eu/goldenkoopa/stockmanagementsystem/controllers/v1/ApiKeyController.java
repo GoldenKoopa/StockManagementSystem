@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * ApiKeyController
- */
+/** ApiKeyController */
 @RestController
 @RequestMapping("/api/v1/apikeys")
 @Secured({"ROLE_ADMIN"})
@@ -30,31 +28,29 @@ public class ApiKeyController {
 
   @GetMapping
   public ResponseEntity<List<ApiKeyWithUserDto>> getAllApiKeys() {
-    List<ApiKeyWithUserDto> apiKeys = apiKeyService.getAllApiKeys()
-                                          .stream()
-                                          .map(ApiKeyWithUserDto::from)
-                                          .toList();
+    List<ApiKeyWithUserDto> apiKeys =
+        apiKeyService.getAllApiKeys().stream().map(ApiKeyWithUserDto::from).toList();
     return new ResponseEntity<>(apiKeys, HttpStatus.OK);
   }
 
   @CrossOrigin
   @PostMapping
-  public ResponseEntity<ApiKeyWithUserDto>
-  generateNewApiKey(@RequestBody ApiKeyRequest apiKeyRequest,
-                    @AuthenticationPrincipal UserDetails userDetails) {
+  public ResponseEntity<ApiKeyWithUserDto> generateNewApiKey(
+      @RequestBody ApiKeyRequest apiKeyRequest, @AuthenticationPrincipal UserDetails userDetails) {
     ApiKeyWithUserDto apiKey =
-        ApiKeyWithUserDto.from(apiKeyService.generateNewApiKey(
-            apiKeyRequest.privilegeIds(), apiKeyRequest.expirationTime(), userDetails));
+        ApiKeyWithUserDto.from(
+            apiKeyService.generateNewApiKey(
+                apiKeyRequest.privilegeIds(), apiKeyRequest.expirationTime(), userDetails));
     return new ResponseEntity<>(apiKey, HttpStatus.CREATED);
   }
 
   private record ApiKeyRequest(
       @NotNull(message = "Privilege IDs cannot be null")
-      @NotEmpty(message = "Privilege IDs cannot be empty")
-      List<@NotNull(message = "Privilege ID cannot be null") Long> privilegeIds,
+          @NotEmpty(message = "Privilege IDs cannot be empty")
+          List<@NotNull(message = "Privilege ID cannot be null") Long> privilegeIds,
       @NotNull(message = "Expiration time cannot be null")
-      @NotEmpty(message = "Expiration time cannot be empty")
-      Long expirationTime) {}
+          @NotEmpty(message = "Expiration time cannot be empty")
+          Long expirationTime) {}
 
   @Autowired
   public ApiKeyController(ApiKeyService apiKeyService) {
