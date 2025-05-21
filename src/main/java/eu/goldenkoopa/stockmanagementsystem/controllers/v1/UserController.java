@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,16 +46,6 @@ public class UserController {
     return new ResponseEntity<UserDto>(UserDto.from(user), HttpStatus.CREATED);
   }
 
-  @PostMapping("/password")
-  public ResponseEntity<Void> changePassword(
-      @RequestBody PasswordChangeRequest passwordChangeRequest, UserDetails userDetails) {
-    userService.updatePassword(
-        userDetails.getUsername(),
-        passwordChangeRequest.oldPassword(),
-        passwordChangeRequest.newPassword());
-    return ResponseEntity.noContent().build();
-  }
-
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     userService.deleteUser(id);
@@ -67,14 +56,6 @@ public class UserController {
   public UserController(UserService userService) {
     this.userService = userService;
   }
-
-  private record PasswordChangeRequest(
-      @NotNull(message = "old password cannot be null")
-          @NotEmpty(message = "old password cannot be empty")
-          String oldPassword,
-      @NotNull(message = "new password cannot be null")
-          @NotEmpty(message = "new password cannot be empty")
-          String newPassword) {}
 
   private record UserPostRequest(
       @NotNull(message = "username cannot be null") @NotEmpty(message = "username cannot be empty")
