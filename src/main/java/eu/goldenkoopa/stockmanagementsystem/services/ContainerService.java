@@ -2,7 +2,9 @@ package eu.goldenkoopa.stockmanagementsystem.services;
 
 import eu.goldenkoopa.stockmanagementsystem.data.Container;
 import eu.goldenkoopa.stockmanagementsystem.data.dto.request.ContainerPostRequestDTO;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.response.ContainerDTO;
 import eu.goldenkoopa.stockmanagementsystem.repositories.ContainerRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,22 @@ public class ContainerService {
     return this.containerRepository.findByNameAndServer(name, server).orElse(null);
   }
 
+  /**
+   * Deletes a container from the repository.
+   *
+   * @param name The name of the container.
+   * @param server The server of the container.
+   */
+  public void deleteContainer(String name, String server) {
+    containerRepository.deleteByNameAndServer(name, server);
+  }
+
   @Autowired
   public ContainerService(ContainerRepository containerRepository) {
     this.containerRepository = containerRepository;
+  }
+
+  public List<Container> getAllContainers() {
+    return containerRepository.findAll();
   }
 }

@@ -15,4 +15,6 @@ public interface ContainerRepository extends JpaRepository<Container, String> {
   Optional<Container> findByNameAndServer(String name, String server);
 
   boolean existsByNameAndServer(String name, String server);
+
+  void deleteByNameAndServer(String name, String server);
 }
