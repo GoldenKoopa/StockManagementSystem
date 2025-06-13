@@ -1,6 +1,6 @@
 package eu.goldenkoopa.stockmanagementsystem.controllers.v1;
 
-import eu.goldenkoopa.stockmanagementsystem.data.dto.authentication.PrivilegeDto;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.response.authentication.PrivilegeDTO;
 import eu.goldenkoopa.stockmanagementsystem.services.PrivilegeService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ public class PrivilegeController {
   private PrivilegeService privilegeService;
 
   @GetMapping
-  public ResponseEntity<List<PrivilegeDto>> getAllPrivileges() {
+  public ResponseEntity<List<PrivilegeDTO>> getAllPrivileges() {
     return ResponseEntity.ok(privilegeService.getAllPrivileges()
                                  .stream()
-                                 .map(PrivilegeDto::from)
+                                 .map(PrivilegeDTO::from)
                                  .toList());
   }
 

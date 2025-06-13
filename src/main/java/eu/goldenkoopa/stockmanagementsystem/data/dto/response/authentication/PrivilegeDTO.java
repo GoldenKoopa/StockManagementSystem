@@ -1,4 +1,4 @@
-package eu.goldenkoopa.stockmanagementsystem.data.dto.authentication;
+package eu.goldenkoopa.stockmanagementsystem.data.dto.response.authentication;
 
 import eu.goldenkoopa.stockmanagementsystem.data.authentication.Privilege;
 
@@ -7,7 +7,7 @@ import eu.goldenkoopa.stockmanagementsystem.data.authentication.Privilege;
  * This record encapsulates the essential information of a privilege,
  * including its unique identifier and name.
  */
-public record PrivilegeDto(Long id, String name) {
+public record PrivilegeDTO(Long id, String name) {
 
   /**
    * Creates a PrivilegeDto from a Privilege entity.
@@ -16,7 +16,7 @@ public record PrivilegeDto(Long id, String name) {
    * @return A new PrivilegeDto instance containing the privilege's information
    * @throws NullPointerException if the privilege parameter is null
    */
-  public static PrivilegeDto from(Privilege privilege) {
-    return new PrivilegeDto(privilege.getId(), privilege.getName());
+  public static PrivilegeDTO from(Privilege privilege) {
+    return new PrivilegeDTO(privilege.getId(), privilege.getName());
   }
 }

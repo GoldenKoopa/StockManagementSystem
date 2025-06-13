@@ -1,10 +1,12 @@
 package eu.goldenkoopa.stockmanagementsystem.controllers.v1;
 
-import eu.goldenkoopa.stockmanagementsystem.data.dto.authentication.ApiKeyWithUserDto;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.request.ApiKeyPostRequestDTO;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.response.authentication.ApiKeyWithUserDTO;
 import eu.goldenkoopa.stockmanagementsystem.services.ApiKeyService;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,30 +29,22 @@ public class ApiKeyController {
   private final ApiKeyService apiKeyService;
 
   @GetMapping
-  public ResponseEntity<List<ApiKeyWithUserDto>> getAllApiKeys() {
-    List<ApiKeyWithUserDto> apiKeys =
-        apiKeyService.getAllApiKeys().stream().map(ApiKeyWithUserDto::from).toList();
+  public ResponseEntity<List<ApiKeyWithUserDTO>> getAllApiKeys() {
+    List<ApiKeyWithUserDTO> apiKeys =
+        apiKeyService.getAllApiKeys().stream().map(ApiKeyWithUserDTO::from).toList();
     return new ResponseEntity<>(apiKeys, HttpStatus.OK);
   }
 
   @CrossOrigin
   @PostMapping
-  public ResponseEntity<ApiKeyWithUserDto> generateNewApiKey(
-      @RequestBody ApiKeyRequest apiKeyRequest, @AuthenticationPrincipal UserDetails userDetails) {
-    ApiKeyWithUserDto apiKey =
-        ApiKeyWithUserDto.from(
+  public ResponseEntity<ApiKeyWithUserDTO> generateNewApiKey(
+    @Valid @RequestBody ApiKeyPostRequestDTO apiKeyRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    ApiKeyWithUserDTO apiKey =
+        ApiKeyWithUserDTO.from(
             apiKeyService.generateNewApiKey(
                 apiKeyRequest.privilegeIds(), apiKeyRequest.expirationTime(), userDetails));
     return new ResponseEntity<>(apiKey, HttpStatus.CREATED);
   }
-
-  private record ApiKeyRequest(
-      @NotNull(message = "Privilege IDs cannot be null")
-          @NotEmpty(message = "Privilege IDs cannot be empty")
-          List<@NotNull(message = "Privilege ID cannot be null") Long> privilegeIds,
-      @NotNull(message = "Expiration time cannot be null")
-          @NotEmpty(message = "Expiration time cannot be empty")
-          Long expirationTime) {}
 
   @Autowired
   public ApiKeyController(ApiKeyService apiKeyService) {

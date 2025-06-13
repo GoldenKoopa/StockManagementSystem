@@ -44,13 +44,13 @@ public class GroupController {
                                          "group does not exist");
     }
     Group group = groupOptional.get();
-    List<Container> containerOptional =
+    Optional<Container> containerOptional =
         containerRepository.findByNameAndServer(containerId, server);
     if (containerOptional.isEmpty()) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST,
                                          "id does not exist");
     }
-    Container container = containerOptional.get(0);
+    Container container = containerOptional.get();
     group.addContainer(container);
     groupRepository.save(group);
     return "success";
@@ -108,7 +108,7 @@ public class GroupController {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST,
                                          "group does not exist");
     }
-    List<Container> containerOptional =
+    Optional<Container> containerOptional =
         containerRepository.findByNameAndServer(name, server);
     if (containerOptional.isEmpty()) {
       throw new HttpServerErrorException(
@@ -116,7 +116,7 @@ public class GroupController {
           "containerid does not exist (on this server?)");
     }
     Group group = groupOptional.get();
-    Container container = containerOptional.get(0);
+    Container container = containerOptional.get();
     if (!group.getContainers().contains(container)) {
       throw new HttpServerErrorException(HttpStatus.BAD_REQUEST,
                                          "container is not in group");

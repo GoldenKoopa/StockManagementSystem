@@ -1,4 +1,4 @@
-package eu.goldenkoopa.stockmanagementsystem.data.dto.authentication;
+package eu.goldenkoopa.stockmanagementsystem.data.dto.response.authentication;
 
 import eu.goldenkoopa.stockmanagementsystem.data.authentication.ApiKey;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * its unique identifier, the key itself, and a list of privileges associated
  * with it.
  */
-public record ApiKeyDto(Long id, String key, List<PrivilegeDto> privileges) {
+public record ApiKeyDTO(Long id, String key, List<PrivilegeDTO> privileges) {
 
   /**
    * Creates an ApiKeyDto from an ApiKey entity.
@@ -20,9 +20,9 @@ public record ApiKeyDto(Long id, String key, List<PrivilegeDto> privileges) {
    *         associated privileges
    * @throws NullPointerException if the apiKey parameter is null
    */
-  public static ApiKeyDto from(ApiKey apiKey) {
-    return new ApiKeyDto(
+  public static ApiKeyDTO from(ApiKey apiKey) {
+    return new ApiKeyDTO(
         apiKey.getId(), apiKey.getKey(),
-        apiKey.getPrivileges().stream().map(PrivilegeDto::from).toList());
+        apiKey.getPrivileges().stream().map(PrivilegeDTO::from).toList());
   }
 }

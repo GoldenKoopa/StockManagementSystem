@@ -13,9 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * ApiKeyService
- */
+/** ApiKeyService */
 @Service
 public class ApiKeyService {
 
@@ -23,7 +21,8 @@ public class ApiKeyService {
   private UserRepository userRepository;
   private PrivilegeRepository privilegeRepository;
 
-  public ApiKeyService(ApiKeyRepository apiKeyRepository,
+  public ApiKeyService(
+      ApiKeyRepository apiKeyRepository,
       UserRepository userRepository,
       PrivilegeRepository privilegeRepository) {
     this.apiKeyRepository = apiKeyRepository;
@@ -40,22 +39,25 @@ public class ApiKeyService {
   }
 
   @Transactional
-  public ApiKey generateNewApiKey(List<Long> privilegeIds, Long expirationTime,
-      UserDetails userDetails) {
+  public ApiKey generateNewApiKey(
+      List<Long> privilegeIds, Long expirationTime, UserDetails userDetails) {
     if (privilegeIds == null || privilegeIds.isEmpty()) {
-      throw new IllegalArgumentException(
-          "Privilege IDs cannot be null or empty");
+      throw new IllegalArgumentException("Privilege IDs cannot be null or empty");
     }
-    User user = userRepository.findByUsername(userDetails.getUsername())
-        .orElseThrow(
-            () -> new UsernameNotFoundException("username not found"));
+    User user =
+        userRepository
+            .findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("username not found"));
 
     ApiKey apiKey = new ApiKey();
     apiKey.setUser(user);
     apiKey.setPrivileges(
         privilegeIds.stream()
-            .map(id -> privilegeRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("privilege id not found: " + id)))
+            .map(
+                id ->
+                    privilegeRepository
+                        .findById(id)
+                        .orElseThrow(() -> new RuntimeException("privilege id not found: " + id)))
             .toList());
     apiKey.setExpirationDate(LocalDate.now().plusDays(expirationTime));
     apiKey.setKey(generateUniqueApiKey());
@@ -73,7 +75,8 @@ public class ApiKeyService {
   }
 
   public ApiKey getApiKeyByKey(String string) {
-    return apiKeyRepository.findByKey(string).orElseThrow(
-        () -> new RuntimeException("api key not found"));
+    return apiKeyRepository
+        .findByKey(string)
+        .orElseThrow(() -> new RuntimeException("api key not found"));
   }
 }

@@ -1,12 +1,14 @@
 package eu.goldenkoopa.stockmanagementsystem.controllers.v1;
 
 import eu.goldenkoopa.stockmanagementsystem.data.authentication.User;
-import eu.goldenkoopa.stockmanagementsystem.data.dto.authentication.UserDto;
-import eu.goldenkoopa.stockmanagementsystem.data.dto.authentication.UserWithApiKeyDto;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.request.UserPostRequestDTO;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.response.authentication.UserDTO;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.response.authentication.UserWithApiKeyDTO;
 import eu.goldenkoopa.stockmanagementsystem.services.UserService;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +29,13 @@ public class UserController {
   private UserService userService;
 
   @GetMapping()
-  public List<UserWithApiKeyDto> getAllUsers() {
-    return userService.getAllUsers().stream().map(UserWithApiKeyDto::from).toList();
+  public List<UserWithApiKeyDTO> getAllUsers() {
+    return userService.getAllUsers().stream().map(UserWithApiKeyDTO::from).toList();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<UserWithApiKeyDto> getUser(@PathVariable Long id) {
-    UserWithApiKeyDto user = UserWithApiKeyDto.from(userService.getUserById(id));
+  public ResponseEntity<UserWithApiKeyDTO> getUser(@PathVariable Long id) {
+    UserWithApiKeyDTO user = UserWithApiKeyDTO.from(userService.getUserById(id));
     if (user == null) {
       return ResponseEntity.notFound().build();
     }
@@ -41,9 +43,9 @@ public class UserController {
   }
 
   @PostMapping()
-  public ResponseEntity<UserDto> createUser(@RequestBody UserPostRequest userPostRequest) {
+  public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserPostRequestDTO userPostRequest) {
     User user = userService.createUser(userPostRequest.username(), userPostRequest.password());
-    return new ResponseEntity<UserDto>(UserDto.from(user), HttpStatus.CREATED);
+    return new ResponseEntity<UserDTO>(UserDTO.from(user), HttpStatus.CREATED);
   }
 
   @DeleteMapping("/{id}")
@@ -57,9 +59,4 @@ public class UserController {
     this.userService = userService;
   }
 
-  private record UserPostRequest(
-      @NotNull(message = "username cannot be null") @NotEmpty(message = "username cannot be empty")
-          String username,
-      @NotNull(message = "password cannot be null") @NotEmpty(message = "password cannot be empty")
-          String password) {}
 }

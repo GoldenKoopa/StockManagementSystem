@@ -11,7 +11,9 @@ import lombok.Data;
 @Table(name = "Groups")
 public class Group {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
   private LocalDateTime createdAt;
   private String createdBy;
@@ -19,9 +21,10 @@ public class Group {
 
   @JsonIgnore
   @ManyToMany
-  @JoinTable(name = "group_containers",
-             joinColumns = @JoinColumn(name = "group_id"),
-             inverseJoinColumns = @JoinColumn(name = "container_id"))
+  @JoinTable(
+      name = "group_containers",
+      joinColumns = @JoinColumn(name = "group_id"),
+      inverseJoinColumns = @JoinColumn(name = "container_id"))
   private List<Container> containers;
 
   public Group() {}
