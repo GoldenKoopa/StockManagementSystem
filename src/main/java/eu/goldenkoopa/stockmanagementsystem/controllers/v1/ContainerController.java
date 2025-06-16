@@ -1,8 +1,10 @@
 package eu.goldenkoopa.stockmanagementsystem.controllers.v1;
 
 import eu.goldenkoopa.stockmanagementsystem.data.Container;
+import eu.goldenkoopa.stockmanagementsystem.data.Group;
 import eu.goldenkoopa.stockmanagementsystem.data.dto.request.ContainerPostRequestDTO;
 import eu.goldenkoopa.stockmanagementsystem.data.dto.response.ContainerDTO;
+import eu.goldenkoopa.stockmanagementsystem.data.dto.response.GroupDTO;
 import eu.goldenkoopa.stockmanagementsystem.services.ContainerService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -75,43 +77,15 @@ public class ContainerController {
     return ResponseEntity.noContent().build();
   }
 
-  // @CrossOrigin
-  // @DeleteMapping("/container")
-  // public String deleteContainerItem(
-  //     @NotNull @RequestParam("containerId") String name,
-  //     @NotNull @RequestParam("server") String server) {
-  //   List<Container> containerList = containerRepository.findByNameAndServer(name, server);
-  //   if (containerList.isEmpty()) {
-  //     throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");
-  //   }
-  //   Container container = containerList.get(0);
-  //   for (Group group : container.getGroups()) {
-  //     group.removeContainer(container);
-  //     groupRepository.save(group);
-  //   }
-  //   containerRepository.delete(container);
-  //   return "success";
-  // }
-  //
-  // @CrossOrigin
-  // @GetMapping("/getContainers")
-  // public List<Container> getAllContainers(
-  //     @RequestParam(value = "server", required = false) String server) {
-  //   return server != null
-  //       ? containerRepository.findByServer(server)
-  //       : containerRepository.findAll();
-  // }
-  //
-  // @GetMapping("/getContainerGroups")
-  // public List<Group> getContainerGroups(
-  //     @RequestParam("server") String server, @RequestParam("containerId") String name) {
-  //   List<Container> containerList = containerRepository.findByNameAndServer(name, server);
-  //   if (containerList.isEmpty()) {
-  //     throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "container does not exist");
-  //   }
-  //   Container container = containerList.get(0);
-  //   return container.getGroups();
-  // }
+  @GetMapping("/{id}/groups")
+  public List<GroupDTO> getContainerGroups(
+      @PathVariable String id, @RequestParam("server") String server) {
+
+    List<Group> groups = containerService.getContainerGroups(id, server);
+
+    return groups.stream().map(GroupDTO::from).toList();
+  }
+
 
   @Autowired
   public ContainerController(ContainerService containerService) {

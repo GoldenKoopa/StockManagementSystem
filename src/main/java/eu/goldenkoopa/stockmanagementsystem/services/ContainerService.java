@@ -1,10 +1,12 @@
 package eu.goldenkoopa.stockmanagementsystem.services;
 
 import eu.goldenkoopa.stockmanagementsystem.data.Container;
+import eu.goldenkoopa.stockmanagementsystem.data.Group;
 import eu.goldenkoopa.stockmanagementsystem.data.dto.request.ContainerPostRequestDTO;
-import eu.goldenkoopa.stockmanagementsystem.data.dto.response.ContainerDTO;
 import eu.goldenkoopa.stockmanagementsystem.repositories.ContainerRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,5 +47,16 @@ public class ContainerService {
 
   public List<Container> getAllContainers() {
     return containerRepository.findAll();
+  }
+
+  public List<Group> getContainerGroups(String name, String server) {
+
+    Optional<Container> container = containerRepository.findByNameAndServer(name, server);
+
+    if (container.isEmpty()) {
+      return new ArrayList<Group>();
+    }
+
+    return container.get().getGroups();
   }
 }
