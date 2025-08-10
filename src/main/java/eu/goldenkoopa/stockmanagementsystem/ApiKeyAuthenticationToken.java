@@ -1,7 +1,6 @@
 package eu.goldenkoopa.stockmanagementsystem;
 
 import eu.goldenkoopa.stockmanagementsystem.data.authentication.ApiKey;
-import java.util.stream.Collectors;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 
@@ -10,7 +9,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
  */
 public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
-  private ApiKey apiKey;
+  private transient ApiKey apiKey;
 
   public ApiKeyAuthenticationToken(ApiKey apiKey) {
     super(AuthorityUtils.createAuthorityList(

@@ -42,7 +42,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     newContext.setAuthentication(auth);
     SecurityContextHolder.setContext(newContext);
 
-    System.out.println("test");
     filterChain.doFilter(request, response);
   }
 
